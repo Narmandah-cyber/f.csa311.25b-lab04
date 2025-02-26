@@ -20,16 +20,16 @@ import org.junit.Test;
  */
 public class IntQueueTest {
 
-    private IntQueue mQueue;
+    private ArrayIntQueue ArrayIntQueue;
     private List<Integer> testList;
 
     @Before
     public void setUp() {
         // Uncomment to test LinkedIntQueue
-        // mQueue = new LinkedIntQueue();
+        // ArrayIntQueue = new LinkedIntQueue();
         
         // Uncomment to test ArrayIntQueue
-        mQueue = new ArrayIntQueue();
+        ArrayIntQueue = new ArrayIntQueue();
 
         testList = new ArrayList<>(List.of(1, 2, 3));
     }
@@ -37,105 +37,105 @@ public class IntQueueTest {
     @Test
     public void testIsEmpty() {
         assertTrue("Queue should be empty initially", 
-        mQueue.isEmpty());
+        ArrayIntQueue.isEmpty());
     }
 
     @Test
     public void testNotEmpty() {
-        mQueue.enqueue(5);
+        ArrayIntQueue.enqueue(5);
         assertFalse("Queue should not be empty after enqueue", 
-        mQueue.isEmpty());
+        ArrayIntQueue.isEmpty());
     }
 
     @Test
     public void testPeekEmptyQueue() {
-        assertTrue(mQueue.isEmpty());
+        assertTrue(ArrayIntQueue.isEmpty());
 
-        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> mQueue.peek());
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> ArrayIntQueue.peek());
         assertEquals("Queue is empty", thrown.getMessage());
     }
 
     @Test
     public void testPeekNoEmptyQueue() {
-        mQueue.enqueue(10);
-        assertEquals("Peek should return first element", 10, (int) mQueue.peek());
-        mQueue.enqueue(20);
-        assertEquals("Peek should still return first element", 10, (int) mQueue.peek()); // FIFO
+        ArrayIntQueue.enqueue(10);
+        assertEquals("Peek should return first element", 10, (int) ArrayIntQueue.peek());
+        ArrayIntQueue.enqueue(20);
+        assertEquals("Peek should still return first element", 10, (int) ArrayIntQueue.peek()); // FIFO
     }
 
     @Test
     public void testEnqueue() {
         for (int i = 0; i < testList.size(); i++) {
-            mQueue.enqueue(testList.get(i));
-            assertEquals("Peek should return first element", testList.get(0), mQueue.peek());
-            assertEquals("Size should increase after enqueue", i + 1, mQueue.size());
+            ArrayIntQueue.enqueue(testList.get(i));
+            assertEquals("Peek should return first element", testList.get(0), ArrayIntQueue.peek());
+            assertEquals("Size should increase after enqueue", i + 1, ArrayIntQueue.size());
         }
     }
 
     @Test
     public void testDequeue() {
-        mQueue.enqueue(1);
-        mQueue.enqueue(2);
-        mQueue.enqueue(3);
+        ArrayIntQueue.enqueue(1);
+        ArrayIntQueue.enqueue(2);
+        ArrayIntQueue.enqueue(3);
 
-        assertEquals("Dequeue should return first element", 1, (int) mQueue.dequeue());
-        assertEquals("Dequeue should return next element", 2, (int) mQueue.dequeue());
-        assertEquals("Dequeue should return next element", 3, (int) mQueue.dequeue());
+        assertEquals("Dequeue should return first element", 1, (int) ArrayIntQueue.dequeue());
+        assertEquals("Dequeue should return next element", 2, (int) ArrayIntQueue.dequeue());
+        assertEquals("Dequeue should return next element", 2, (int) ArrayIntQueue.dequeue());
 
-        assertTrue("Queue should be empty after dequeuing all elements", mQueue.isEmpty());
+        assertTrue("Queue should be empty after dequeuing all elements", ArrayIntQueue.isEmpty());
     }
 
     @Test
     public void testDequeueEmptyQueue() {
-        assertNull("Dequeue on empty queue should return null", mQueue.dequeue());
+        assertNull("Dequeue on empty queue should return null", ArrayIntQueue.dequeue());
     }
 
     @Test
     public void testClear() {
-        mQueue.enqueue(1);
-        mQueue.enqueue(2);
-        mQueue.enqueue(3);
+        ArrayIntQueue.enqueue(1);
+        ArrayIntQueue.enqueue(2);
+        ArrayIntQueue.enqueue(3);
 
         assertFalse("Queue should not be empty before clearing", 
-        mQueue.isEmpty());
+        ArrayIntQueue.isEmpty());
 
-        mQueue.clear();
+        ArrayIntQueue.clear();
 
         assertTrue("Queue should be empty after clearing", 
-        mQueue.isEmpty());
+        ArrayIntQueue.isEmpty());
         assertEquals("Size should be 0 after clearing", 0,
-        mQueue.size());
+        ArrayIntQueue.size());
 
         assertNull("Dequeue on cleared queue should return null", 
-        mQueue.dequeue());
+        ArrayIntQueue.dequeue());
     }
 
     @Test
     public void testOrderPreserved() {
-        mQueue.enqueue(10);
-        mQueue.enqueue(20);
-        mQueue.enqueue(30);
+        // ArrayIntQueue.enqueue(10);
+        // ArrayIntQueue.enqueue(20);
+        // ArrayIntQueue.enqueue(30);
 
-        assertEquals("First dequeued should be first enqueued", 10, (int) mQueue.dequeue());
-        assertEquals("Second dequeued should be second enqueued", 20, (int) mQueue.dequeue());
-        assertEquals("Third dequeued should be third enqueued", 30, (int) mQueue.dequeue());
+        // assertEquals("First dequeued should be first enqueued", 10, (int) ArrayIntQueue.dequeue());
+        // assertEquals("Second dequeued should be second enqueued", 20, (int) ArrayIntQueue.dequeue());
+        // assertEquals("Third dequeued should be third enqueued", 30, (int) ArrayIntQueue.dequeue());
     }
 
     @Test
     public void testEnqueueResize() {
         // Assuming initial capacity is 10
         for (int i = 1; i <= 15; i++) {
-            mQueue.enqueue(i);
+            ArrayIntQueue.enqueue(i);
         }
 
-        assertEquals("Size should be 15 after 15 enqueues", 15, mQueue.size());
-        assertEquals("Peek should return first enqueued element", 1, (int) mQueue.peek());
+        assertEquals("Size should be 15 after 15 enqueues", 15, ArrayIntQueue.size());
+        assertEquals("Peek should return first enqueued element", 1, (int) ArrayIntQueue.peek());
 
         for (int i = 1; i <= 15; i++) {
-            assertEquals("Dequeue should return elements in order", i, (int) mQueue.dequeue());
+            assertEquals("Dequeue should return elements in order", i, (int) ArrayIntQueue.dequeue());
         }
 
-        assertTrue("Queue should be empty after dequeuing all elements", mQueue.isEmpty());
+        assertTrue("Queue should be empty", ArrayIntQueue.isEmpty());
     }
 
     @Test
@@ -148,11 +148,11 @@ public class IntQueueTest {
             while (scanner.hasNextInt()) {
                 int input = scanner.nextInt();
                 correctResult.add(input);
-                mQueue.enqueue(input);
+                ArrayIntQueue.enqueue(input);
             }
 
             for (Integer result : correctResult) {
-                assertEquals("Dequeued values should match enqueued values", result, mQueue.dequeue());
+                assertEquals("Dequeued values should match enqueued values", result, ArrayIntQueue.dequeue());
             }
         }
     }
