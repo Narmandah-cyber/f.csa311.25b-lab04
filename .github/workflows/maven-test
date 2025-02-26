@@ -1,9 +1,9 @@
-name: Run Maven Test for Specific File
+name: Run Maven Test for Java Folder
 
 on:
-  push:  # Runs the action on every push
+  push:
     branches:
-      - main  # Change to your branch if needed
+      - main  # Change if needed
 
 jobs:
   test:
@@ -20,8 +20,12 @@ jobs:
           java-version: '22'
           cache: maven
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Build Java Project in Java Folder
+        run: |
+          cd Java  # Change to the Java folder
+          mvn clean install
 
-      - name: Run Specific Test File
-        run: mvn test -Dtest=YourTestFile
+      - name: Run Tests in Java Folder
+        run: |
+          cd Java  # Change to the Java folder
+          mvn test
