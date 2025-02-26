@@ -22,10 +22,8 @@ jobs:
 
       - name: Build Java Project in Java Folder
         run: |
-          cd Java  # Change to the Java folder
           mvn clean install
 
       - name: Run Tests in Java Folder
         run: |
-          cd Java  # Change to the Java folder
           mvn test
