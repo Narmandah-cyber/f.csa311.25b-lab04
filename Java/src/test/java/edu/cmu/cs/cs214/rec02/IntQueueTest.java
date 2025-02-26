@@ -1,8 +1,5 @@
 package edu.cmu.cs.cs214.rec02;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,83 +7,139 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * TODO: 
- * 1. The {@link LinkedIntQueue} has no bugs. We've provided you with some example test cases.
- * Write your own unit tests to test against IntQueue interface with specification testing method 
- * using mQueue = new LinkedIntQueue();
- * 
- * 2. 
- * Comment `mQueue = new LinkedIntQueue();` and uncomment `mQueue = new ArrayIntQueue();`
- * Use your test cases from part 1 to test ArrayIntQueue and find bugs in the {@link ArrayIntQueue} class
- * Write more unit tests to test the implementation of ArrayIntQueue, with structural testing method
- * Aim to achieve 100% line coverage for ArrayIntQueue
- *
- * @author Alex Lockwood, George Guo, Terry Li
+ * Unit tests for IntQueue implementations.
  */
 public class IntQueueTest {
 
     private IntQueue mQueue;
     private List<Integer> testList;
 
-    /**
-     * Called before each test.
-     */
     @Before
     public void setUp() {
-        // comment/uncomment these lines to test each class
-        mQueue = new LinkedIntQueue();
-    //    mQueue = new ArrayIntQueue();
+        // Uncomment to test LinkedIntQueue
+        // mQueue = new LinkedIntQueue();
+        
+        // Uncomment to test ArrayIntQueue
+        mQueue = new ArrayIntQueue();
 
         testList = new ArrayList<>(List.of(1, 2, 3));
     }
 
     @Test
     public void testIsEmpty() {
-        // This is an example unit test
-        assertTrue(mQueue.isEmpty());
+        assertTrue("Queue should be empty initially", 
+        mQueue.isEmpty());
     }
 
     @Test
     public void testNotEmpty() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(5);
+        assertFalse("Queue should not be empty after enqueue", 
+        mQueue.isEmpty());
     }
 
     @Test
     public void testPeekEmptyQueue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        assertTrue(mQueue.isEmpty());
+
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> mQueue.peek());
+        assertEquals("Queue is empty", thrown.getMessage());
     }
 
     @Test
     public void testPeekNoEmptyQueue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(10);
+        assertEquals("Peek should return first element", 10, (int) mQueue.peek());
+        mQueue.enqueue(20);
+        assertEquals("Peek should still return first element", 10, (int) mQueue.peek()); // FIFO
     }
 
     @Test
     public void testEnqueue() {
-        // This is an example unit test
         for (int i = 0; i < testList.size(); i++) {
             mQueue.enqueue(testList.get(i));
-            assertEquals(testList.get(0), mQueue.peek());
-            assertEquals(i + 1, mQueue.size());
+            assertEquals("Peek should return first element", testList.get(0), mQueue.peek());
+            assertEquals("Size should increase after enqueue", i + 1, mQueue.size());
         }
     }
 
     @Test
     public void testDequeue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(1);
+        mQueue.enqueue(2);
+        mQueue.enqueue(3);
+
+        assertEquals("Dequeue should return first element", 1, (int) mQueue.dequeue());
+        assertEquals("Dequeue should return next element", 2, (int) mQueue.dequeue());
+        assertEquals("Dequeue should return next element", 3, (int) mQueue.dequeue());
+
+        assertTrue("Queue should be empty after dequeuing all elements", mQueue.isEmpty());
+    }
+
+    @Test
+    public void testDequeueEmptyQueue() {
+        assertNull("Dequeue on empty queue should return null", mQueue.dequeue());
+    }
+
+    @Test
+    public void testClear() {
+        mQueue.enqueue(1);
+        mQueue.enqueue(2);
+        mQueue.enqueue(3);
+
+        assertFalse("Queue should not be empty before clearing", 
+        mQueue.isEmpty());
+
+        mQueue.clear();
+
+        assertTrue("Queue should be empty after clearing", 
+        mQueue.isEmpty());
+        assertEquals("Size should be 0 after clearing", 0,
+        mQueue.size());
+
+        assertNull("Dequeue on cleared queue should return null", 
+        mQueue.dequeue());
+    }
+
+    @Test
+    public void testOrderPreserved() {
+        mQueue.enqueue(10);
+        mQueue.enqueue(20);
+        mQueue.enqueue(30);
+
+        assertEquals("First dequeued should be first enqueued", 10, (int) mQueue.dequeue());
+        assertEquals("Second dequeued should be second enqueued", 20, (int) mQueue.dequeue());
+        assertEquals("Third dequeued should be third enqueued", 30, (int) mQueue.dequeue());
+    }
+
+    @Test
+    public void testEnqueueResize() {
+        // Assuming initial capacity is 10
+        for (int i = 1; i <= 15; i++) {
+            mQueue.enqueue(i);
+        }
+
+        assertEquals("Size should be 15 after 15 enqueues", 15, mQueue.size());
+        assertEquals("Peek should return first enqueued element", 1, (int) mQueue.peek());
+
+        for (int i = 1; i <= 15; i++) {
+            assertEquals("Dequeue should return elements in order", i, (int) mQueue.dequeue());
+        }
+
+        assertTrue("Queue should be empty after dequeuing all elements", mQueue.isEmpty());
     }
 
     @Test
     public void testContent() throws IOException {
-        // This is an example unit test
         InputStream in = new FileInputStream("src/test/resources/data.txt");
         try (Scanner scanner = new Scanner(in)) {
             scanner.useDelimiter("\\s*fish\\s*");
@@ -95,15 +148,12 @@ public class IntQueueTest {
             while (scanner.hasNextInt()) {
                 int input = scanner.nextInt();
                 correctResult.add(input);
-                System.out.println("enqueue: " + input);
                 mQueue.enqueue(input);
             }
 
             for (Integer result : correctResult) {
-                assertEquals(mQueue.dequeue(), result);
+                assertEquals("Dequeued values should match enqueued values", result, mQueue.dequeue());
             }
         }
     }
-
-
 }
