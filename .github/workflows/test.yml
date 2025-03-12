@@ -26,4 +26,15 @@ jobs:
 
     - name: Run tests with Maven
       working-directory: Java
-      run: mvn test 
+      run: mvn test || true 
+    - name: Upload Surefire Reports
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-reports
+        path: Java/target/surefire-reports
+
+    - name: Run tests with Maven (Debug)
+      working-directory: Java
+      run: mvn test -e -X  # Enables detailed error logs
+
