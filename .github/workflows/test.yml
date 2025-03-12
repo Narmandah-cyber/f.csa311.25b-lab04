@@ -18,23 +18,19 @@ jobs:
         cache: 'maven'
 
     - name: Verify POM.xml exists
-      run: ls -la Java  # POM.xml байгаа эсэхийг шалгах
+      run: ls -la Java  # Check if POM.xml exists
 
     - name: Build with Maven
       working-directory: Java
       run: mvn install -B  
 
-    - name: Run tests with Maven
+    - name: Run tests with Maven (Debug Mode)
       working-directory: Java
-      run: mvn test || true 
-    - name: Upload Surefire Reports
+      run: mvn test -e -X  # Enables detailed error logs
+
+    - name: Upload Surefire Reports (if tests fail)
       if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: surefire-reports
         path: Java/target/surefire-reports
-
-    - name: Run tests with Maven (Debug)
-      working-directory: Java
-      run: mvn test -e -X  # Enables detailed error logs
-
