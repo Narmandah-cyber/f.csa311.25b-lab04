@@ -1,31 +1,29 @@
-name: Run Maven Test for Java Folder
+name: Java CI with Maven
 
-on:
-  push:
-    branches:
-      - main  # Change if needed
+on: [push, pull_request]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Check out repository code
+      uses: actions/checkout@v4
 
-      - name: Set up JDK 22
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '22'
-          cache: maven
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+        cache: 'maven'
 
-      - name: Build Java Project in Java Folder
-        run: |
-          cd Java  # Change to the Java folder
-          mvn clean install
+    - name: Verify POM.xml exists
+      run: ls -la Java  # POM.xml байгаа эсэхийг шалгах
 
-      - name: Run Tests in Java Folder
-        run: |
-          cd Java  # Change to the Java folder
-          mvn test
+    - name: Build with Maven
+      working-directory: Java
+      run: mvn install -B  
+
+    - name: Run tests with Maven
+      working-directory: Java
+      run: mvn test 

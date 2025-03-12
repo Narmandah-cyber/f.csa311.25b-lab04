@@ -42,7 +42,7 @@ public interface IntQueue {
      * Fetch the element at the head of the queue.
      *
      * @return The element at the head of the queue. Returns null if queue
-     * 		   is empty.
+     * 		   is empty...
      */
     Integer peek();
 
